@@ -1,7 +1,8 @@
 # orangefox-builder-action
-Use it with other actions for cleanup, swap space, and ccache to build recovery
 
 This GitHub Action allows you to build OrangeFox recovery for a specified device.
+
+Use it with other actions for cleanup, swap space (and ccache for v1.1) 
 
 ## Usage
 
