@@ -57,4 +57,4 @@ runs:
 
 branding:
   icon: "terminal"
-  color: "gray-dark"
+  color: "orange"
