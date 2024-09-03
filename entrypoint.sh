@@ -43,11 +43,13 @@ git clone "$DEVICE_TREE" -b "$DEVICE_TREE_BRANCH" "./$DEVICE_PATH"
 # Build OrangeFox
 echo "Building OrangeFox..."
 cd "$ORANGEFOX_ROOT"
+set +e
 export USE_CCACHE=1
 export CCACHE_EXEC=/usr/bin/ccache
 sed -i 's/return sandboxConfig\.working/return false/g' build/soong/ui/build/sandbox_linux.go
 source build/envsetup.sh
 export ALLOW_MISSING_DEPENDENCIES=true
+set -e
 lunch "twrp_$DEVICE_NAME-eng" && make clean && mka adbd "${BUILD_TARGET}image"
 
 # Check if the recovery image exists
