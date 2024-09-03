@@ -4,6 +4,12 @@ This GitHub Action allows you to build OrangeFox recovery for a specified device
 
 Use it with other actions for cleanup, swap space (and ccache for v1.1) 
 
+Environment variable OUTPUT_DIR is set as 
+```
+echo "OUTPUT_DIR="$ORANGEFOX_ROOT/out/target/product/$DEVICE_NAME"" >> $GITHUB_ENV
+```
+and can be used by ```${{ env.OUTPUT_DIR }}``` for the output directory of the .img file
+
 ## Usage
 
 To use this action in your workflow, create a `.yml` file in your `.github/workflows` directory with the following content:
