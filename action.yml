@@ -44,6 +44,16 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Set up environment
+      shell: bash
+      run: |
+        echo "MANIFEST_BRANCH=${{ inputs.MANIFEST_BRANCH }}" >> $GITHUB_ENV
+        echo "DEVICE_TREE=${{ inputs.DEVICE_TREE }}" >> $GITHUB_ENV
+        echo "DEVICE_TREE_BRANCH=${{ inputs.DEVICE_TREE_BRANCH }}" >> $GITHUB_ENV
+        echo "DEVICE_NAME=${{ inputs.DEVICE_NAME }}" >> $GITHUB_ENV
+        echo "DEVICE_PATH=${{ inputs.DEVICE_PATH }}" >> $GITHUB_ENV
+        echo "BUILD_TARGET=${{ inputs.BUILD_TARGET }}" >> $GITHUB_ENV
+
     - name: 'Build ofox'
       shell: bash
       run: |
