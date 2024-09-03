@@ -1,0 +1,52 @@
+name: OrangeFox [OFRP]
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build OFRP by ${{ github.actor }}
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Clean-up
+      uses: rokibhasansagar/slimhub_actions@main
+
+    - name: Swap Space
+      uses: pierotofy/set-swap-space@master
+      with:
+        swap-size-gb: 12
+
+    - name: Build OrangeFox Recovery
+      uses: YourUsername/OrangeFox-Build-Action@main  # Replace with your actual action name
+      with:
+        MANIFEST_BRANCH: '12.1'
+        DEVICE_TREE: 'https://github.com/mlm-games/ofox_m31s'
+        DEVICE_TREE_BRANCH: 'android-12.1'
+        DEVICE_NAME: 'm31s'
+        DEVICE_PATH: 'device/samsung/m31s'
+        BUILD_TARGET: 'recovery'
+
+    # - name: Upload to Release
+    #   uses: softprops/action-gh-release@v1
+    #   if: success()
+    #   with:
+    #     files: |
+    #       ${{ env.OUTPUT_DIR }}/OrangeFox*.img
+    #       ${{ env.OUTPUT_DIR }}/OrangeFox*.tar
+    #       ${{ env.OUTPUT_DIR }}/OrangeFox*.zip
+    #       ${{ env.OUTPUT_DIR }}/ramdisk-recovery.*
+    #     name: Unofficial OrangeFox for ${{ inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
+    #     tag_name: ${{ github.run_id }}
+    #     body: |
+    #       Build: ${{ inputs.MANIFEST_BRANCH }}
+    #       Device: [Device Tree/Branch](${{ inputs.DEVICE_TREE }}/tree/${{ inputs.DEVICE_TREE_BRANCH }})
+    #       Commit: Most recent [commit](${{ inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
+    #       MD5 (img): ${{ env.MD5_IMG }}
+    #       MD5 (zip): ${{ env.MD5_ZIP }}
+    #     prerelease: true
