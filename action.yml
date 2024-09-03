@@ -40,17 +40,7 @@ inputs:
     - boot
     - recovery
     - vendorboot
-  LDCHECK:
-    description: 'Use LDCHECK'
-    required: false
-    default: 'false'
-    type: boolean
-  LDCHECKPATH:
-    description: 'Path of blobs to check'
-    required: true
-    default: 'system/bin/qseecomd'
-    type: string
-
+    
 runs:
   using: 'docker'
   image: 'Dockerfile'

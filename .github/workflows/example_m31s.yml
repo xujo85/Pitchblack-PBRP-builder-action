@@ -36,7 +36,8 @@ jobs:
         sudo docker --version
 
     - name: Build OrangeFox Recovery
-      uses: mlm-games/OrangeFox-Builder-Action@main  # Replace with your actual action name
+      uses: mlm-games/OrangeFox-Builder-Action@main 
+      id: build
       with:
         MANIFEST_BRANCH: '12.1'
         DEVICE_TREE: 'https://github.com/mlm-games/ofox_m31s'
@@ -45,7 +46,7 @@ jobs:
         DEVICE_PATH: 'device/samsung/m31s'
         BUILD_TARGET: 'recovery'
 
-    # - name: Upload to Release
+    # - name: Upload to Release        # Github artifact action eats your space even if you delete the artifacts :\
     #   uses: softprops/action-gh-release@v1
     #   if: success()
     #   with:

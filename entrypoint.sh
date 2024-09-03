@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+set_output(){
+    echo "$1=$2" >> $GITHUB_OUTPUT
+}
+
 # Install necessary packages
 sudo apt-get update
 sudo apt-get install -y aria2 git
@@ -46,20 +50,17 @@ zip_file=$(find "${OUTPUT_DIR}" -name "OrangeFox*.zip" -print -quit)
 
 if [ -f "$img_file" ]; then
     echo "CHECK_IMG_IS_OK=true" >> $GITHUB_ENV
+    set_output out_img "$img_file"
     echo "MD5_IMG=$(md5sum "$img_file" | cut -d ' ' -f 1)" >> $GITHUB_ENV
 else
     echo "Recovery out directory is empty."
+    exit 1
 fi
 
 if [ -f "$zip_file" ]; then
     echo "CHECK_ZIP_IS_OK=true" >> $GITHUB_ENV
+    set_output out_zip "$zip_file"
     echo "MD5_ZIP=$(md5sum "$zip_file" | cut -d ' ' -f 1)" >> $GITHUB_ENV
 else
     echo "::warning::The zip file isn't present but make sure the image is from only after 100% completion in build stage"
-fi
-
-# Run LDCheck if enabled
-if [ "${INPUT_LDCHECK}" = "true" ]; then
-    
-    echo "Done checking missing dependencies. Review, and reconfigure your tree."
 fi
