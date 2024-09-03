@@ -22,11 +22,6 @@ jobs:
       with:
         swap-size-gb: 12
 
-    - name: Setup ccache
-      uses: hendrikmuhs/ccache-action@v1.2
-      with:
-        max-size: "10G"
-
     - name: Build OrangeFox Recovery
       uses: mlm-games/OrangeFox-Builder-Action@main 
       id: build
