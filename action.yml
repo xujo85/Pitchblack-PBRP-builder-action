@@ -40,10 +40,14 @@ inputs:
     - boot
     - recovery
     - vendorboot
-    
+
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: 'composite'
+  steps:
+    - name: 'Build ofox'
+      shell: bash
+      run: |
+        bash $GITHUB_ACTION_PATH/entrypoint.sh
 
 branding:
   icon: "terminal"
