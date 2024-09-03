@@ -23,7 +23,7 @@ jobs:
         swap-size-gb: 12
 
     - name: Build OrangeFox Recovery
-      uses: mlm-games/OrangeFox-Build-Action@main  # Replace with your actual action name
+      uses: mlm-games/OrangeFox-Builder-Action@main  # Replace with your actual action name
       with:
         MANIFEST_BRANCH: '12.1'
         DEVICE_TREE: 'https://github.com/mlm-games/ofox_m31s'
