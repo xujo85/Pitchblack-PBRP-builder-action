@@ -22,6 +22,19 @@ jobs:
       with:
         swap-size-gb: 12
 
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        max-size: "10G"
+
+    - name: Set up Docker  # TODO: retain docker in slimhub_actions
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker.io
+        sudo systemctl start docker
+        sudo systemctl enable docker
+        sudo docker --version
+
     - name: Build OrangeFox Recovery
       uses: mlm-games/OrangeFox-Builder-Action@main  # Replace with your actual action name
       with:
