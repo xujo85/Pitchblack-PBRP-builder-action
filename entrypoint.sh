@@ -21,6 +21,8 @@ bash setup/android_build_env.sh
 MANIFEST_DIR="$GITHUB_WORKSPACE/OrangeFox"
 ORANGEFOX_ROOT="$MANIFEST_DIR/fox_$MANIFEST_BRANCH"
 OUTPUT_DIR="$ORANGEFOX_ROOT/out/target/product/$DEVICE_NAME"
+echo "OUTPUT_DIR="$ORANGEFOX_ROOT/out/target/product/$DEVICE_NAME"" >> $GITHUB_ENV
+echo "OUTPUT_DIR="$ORANGEFOX_ROOT/out/target/product/$DEVICE_NAME""
 
 mkdir -p "$MANIFEST_DIR"
 cd "$MANIFEST_DIR"
