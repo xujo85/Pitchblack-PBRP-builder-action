@@ -49,7 +49,7 @@ sed -i 's/return sandboxConfig\.working/return false/g' build/soong/ui/build/san
 source build/envsetup.sh
 export ALLOW_MISSING_DEPENDENCIES=true
 set -e
-lunch "twrp_$DEVICE_NAME-eng" && make clean && mka adbd "${BUILD_TARGET}image"
+lunch "twrp_$DEVICE_NAME-eng" && make clean && mka -j$(nproc) adbd "${BUILD_TARGET}image"
 
 # Check if the recovery image exists
 img_file=$(find "$OUTPUT_DIR" -name "${BUILD_TARGET}*.img" -print -quit)
