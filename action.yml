@@ -1,5 +1,5 @@
 name: "OrangeFox Build Action"
-author: 'Ragebreaker' 
+author: 'Ragebreaker'
 description: "A GitHub action to build OrangeFox recovery for a specified device."
 
 inputs:
@@ -19,12 +19,12 @@ inputs:
     default: 'main'
     type: string
   DEVICE_NAME:
-    description: 'Specify your Device Codename'
-    default: 'codename'
+    description: 'Specify your Device Codename (leave blank to auto-detect)'
+    default: ''
     type: string
   DEVICE_PATH:
-    description: 'Specify your Device Path (Check the DEVICE_PATH in BoardConfig.mk)'
-    default: 'device/company/codename'
+    description: 'Specify your Device Path (leave blank to auto-detect from device tree)'
+    default: ''
     type: string
   BUILD_TARGET:
     description: 'Specify your Build Target'
