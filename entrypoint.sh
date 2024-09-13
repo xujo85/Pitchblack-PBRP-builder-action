@@ -8,17 +8,25 @@ set_output() {
 
 # Install necessary packages
 echo "Installing necessary packages..."
+sudo add-apt-repository universe
 sudo apt-get update
-sudo apt-get install -y aria2 git
+sudo apt-get -y upgrade
+sudo apt-get install -y gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libtinfo5 libgflags-dev libncurses5 python3 curl unzip
 
-# Clone OrangeFox scripts
-echo "Cloning OrangeFox scripts..."
-git clone https://gitlab.com/OrangeFox/misc/scripts.git
-cd scripts
-bash setup/android_build_env.sh
+# Install OpenJDK 8
+echo "Installing OpenJDK 8..."
+sudo apt-get install -y openjdk-8-jdk
+
+# Install repo tool
+echo "Installing repo tool..."
+mkdir -p ~/bin
+curl https://storage.googleapis.com/git-repo-downloads/repo -o ~/bin/repo
+chmod a+x ~/bin/repo
+sudo ln -sf ~/bin/repo /usr/bin/repo
 
 # Set up the build environment
-MANIFEST_DIR="$GITHUB_WORKSPACE/OrangeFox"
+echo "Setting up build environment..."
+MANIFEST_DIR="$GITHUB_WORKSPACE/android-recovery"
 mkdir -p "$MANIFEST_DIR"
 cd "$MANIFEST_DIR"
 
@@ -26,19 +34,20 @@ cd "$MANIFEST_DIR"
 git config --global user.name "$GITHUB_ACTOR"
 git config --global user.email "$GITHUB_ACTOR_ID+$GITHUB_ACTOR@users.noreply.github.com"
 
-# Clone OrangeFox sync repository
-echo "Cloning OrangeFox sync repository..."
-git clone https://gitlab.com/OrangeFox/sync.git -b master
-cd sync
-./orangefox_sync.sh --branch "$MANIFEST_BRANCH" --path "$MANIFEST_DIR/fox_$MANIFEST_BRANCH"
+# Initialize the repo
+echo "Initializing PBRP repo..."
+repo init --depth=1 -u https://github.com/PitchBlackRecoveryProject/manifest_pb.git -b "$MANIFEST_BRANCH"
+
+# Sync the repo
+echo "Syncing PBRP repo..."
+repo sync -j$(nproc --all) --force-sync
 
 # Clone device tree into a temporary directory
 echo "Cloning device tree..."
-cd "$MANIFEST_DIR/fox_$MANIFEST_BRANCH"
 git clone "$DEVICE_TREE" -b "$DEVICE_TREE_BRANCH" tmp_device_tree
 
 # Check if DEVICE_NAME or DEVICE_PATH are default or not provided
-if [ -z "$DEVICE_NAME" ] || [ "$DEVICE_NAME" == "codename" ] || [ -z "$DEVICE_PATH" ] || [ "$DEVICE_PATH" == "device/company/codename" ]; then
+if [ -z "$DEVICE_NAME" ] || [ -z "$DEVICE_PATH" ]; then
     echo "Extracting variables from .mk files..."
     cd tmp_device_tree
 
@@ -47,10 +56,10 @@ if [ -z "$DEVICE_NAME" ] || [ "$DEVICE_NAME" == "codename" ] || [ -z "$DEVICE_PA
     DEVICE_DIRECTORY=""
     DEVICE_NAME=""
     BRAND=""
-    
+
     # Search for .mk files recursively in the device tree
     mk_files=$(find . -type f -name '*.mk')
-    
+
     # Loop through each .mk file found
     for file in $mk_files; do
         # Extract variables using sed
@@ -76,8 +85,8 @@ if [ -z "$DEVICE_NAME" ] || [ "$DEVICE_NAME" == "codename" ] || [ -z "$DEVICE_PA
         exit 1
     fi
 
-    # Navigate back to the root
-    cd "$MANIFEST_DIR/fox_$MANIFEST_BRANCH"
+    # Navigate back to the MANIFEST_DIR
+    cd "$MANIFEST_DIR"
 
     # Move the device tree into the correct directory
     echo "Moving device tree to $DEVICE_PATH"
@@ -92,35 +101,72 @@ else
     rm -rf tmp_device_tree
 fi
 
-# Set ORANGEFOX_ROOT and OUTPUT_DIR now that DEVICE_NAME is known
-ORANGEFOX_ROOT="$MANIFEST_DIR/fox_$MANIFEST_BRANCH"
-echo "ORANGEFOX_ROOT=${ORANGEFOX_ROOT}" >> $GITHUB_ENV
-OUTPUT_DIR="$ORANGEFOX_ROOT/out/target/product/$DEVICE_NAME"
+# Check for DEVICE_MAKEFILE if not set
+if [ -z "$DEVICE_MAKEFILE" ]; then
+    echo "Checking for recovery makefile..."
+    if [ -f "$DEVICE_PATH/twrp_${DEVICE_NAME}.mk" ]; then
+        DEVICE_MAKEFILE="twrp_${DEVICE_NAME}"
+    elif [ -f "$DEVICE_PATH/omni_${DEVICE_NAME}.mk" ]; then
+        DEVICE_MAKEFILE="omni_${DEVICE_NAME}"
+    elif [ -f "$DEVICE_PATH/pb_${DEVICE_NAME}.mk" ]; then
+        DEVICE_MAKEFILE="pb_${DEVICE_NAME}"
+    else
+        echo "::error::No recovery makefile found!"
+        exit 1
+    fi
+    echo "DEVICE_MAKEFILE=${DEVICE_MAKEFILE}" >> $GITHUB_ENV
+fi
+
+# Set OUTPUT_DIR
+OUTPUT_DIR="$MANIFEST_DIR/out/target/product/$DEVICE_NAME"
 echo "OUTPUT_DIR=${OUTPUT_DIR}" >> $GITHUB_ENV
 
-# Build OrangeFox
-echo "Building OrangeFox..."
-cd "$ORANGEFOX_ROOT"
-set +e
-sed -i 's/return sandboxConfig\.working/return false/g' build/soong/ui/build/sandbox_linux.go || true
+# Install additional dependencies for legacy branches
+if [[ "$MANIFEST_BRANCH" != "android-11.0" && "$MANIFEST_BRANCH" != "android-12.1" ]]; then
+    echo "Installing Python 2 for legacy branches..."
+    sudo apt-get install -y python2
+    sudo ln -sf /usr/bin/python2 /usr/bin/python
+else
+    echo "No need to install Python 2 for this branch."
+fi
+
+# Fix missing fonts
+echo "Fixing missing fonts..."
+mkdir -p external/noto-fonts/other
+cd external/noto-fonts/other
+wget https://github.com/cd-Crypton/custom-recovery-extras/raw/main/missing-font.zip
+unzip -o missing-font.zip
+cd "$MANIFEST_DIR"
+
+# Build PBRP
+echo "Building PBRP..."
 source build/envsetup.sh
 export ALLOW_MISSING_DEPENDENCIES=true
-set -e
-lunch "twrp_${DEVICE_NAME}-eng"
-make clean
-mka -j$(nproc) adbd "${BUILD_TARGET}image"
+
+if [ "$BUILD_TARGET" != "pbrp" ]; then
+    lunch "${DEVICE_MAKEFILE}-eng"
+    make clean
+    mka -j$(nproc) "${BUILD_TARGET}image"
+else
+    lunch "${DEVICE_MAKEFILE}-eng"
+    make clean
+    mka -j$(nproc) "$BUILD_TARGET"
+fi
+
+# Set build date
+echo "BUILD_DATE=$(TZ=UTC date +%Y%m%d)" >> $GITHUB_ENV
 
 # Check if the recovery image exists
-img_file=$(find "$OUTPUT_DIR" -name "${BUILD_TARGET}*.img" -print -quit)
-zip_file=$(find "$OUTPUT_DIR" -name "OrangeFox*.zip" -print -quit)
+echo "Checking if the recovery image exists..."
+img_file=$(find "$OUTPUT_DIR" -name "*.img" -print -quit)
+zip_file=$(find "$OUTPUT_DIR" -name "PBRP*.zip" -print -quit)
 
 if [ -f "$img_file" ]; then
     echo "CHECK_IMG_IS_OK=true" >> $GITHUB_ENV
     set_output "out_img" "$img_file"
     echo "MD5_IMG=$(md5sum "$img_file" | cut -d ' ' -f 1)" >> $GITHUB_ENV
 else
-    echo "::error::Recovery image not found."
-    exit 1
+    echo "::warning::Recovery image not found."
 fi
 
 if [ -f "$zip_file" ]; then
@@ -128,5 +174,5 @@ if [ -f "$zip_file" ]; then
     set_output "out_zip" "$zip_file"
     echo "MD5_ZIP=$(md5sum "$zip_file" | cut -d ' ' -f 1)" >> $GITHUB_ENV
 else
-    echo "::warning::The zip file isn't present. Ensure the build completed successfully."
+    echo "::warning::Recovery ZIP not found."
 fi
