@@ -1,44 +1,66 @@
-name: "OrangeFox Build Action"
-author: 'Ragebreaker'
-description: "A GitHub action to build OrangeFox recovery for a specified device."
+name: "PBRP Build Action"
+author: 'mlm-games'
+description: "A GitHub action to build PitchBlack Recovery Project (PBRP) for a specified device."
 
 inputs:
   MANIFEST_BRANCH:
-    description: 'OrangeFox Manifest Branch'
-    default: '12.1'
+    description: 'PBRP Manifest Branch'
+    default: 'android-12.1'
+    required: false
     type: choice
     options:
-    - 12.1
-    - 11.0
+      - android-12.1
+      - android-11.0
+      - android-10.0
+      - android-9.0
+      - android-8.1
+      - android-7.1
+      - android-6.0
   DEVICE_TREE:
-    description: 'Custom Recovery Tree'
+    description: 'Custom Recovery Tree URL (your device tree repository)'
     default: "https://github.com/${{ github.repository }}"
+    required: false
     type: string
   DEVICE_TREE_BRANCH:
-    description: 'Custom Recovery Tree Branch (use main if default)'
+    description: 'Custom Recovery Tree Branch'
     default: 'main'
+    required: false
     type: string
   DEVICE_NAME:
     description: 'Specify your Device Codename (leave blank to auto-detect)'
     default: ''
+    required: false
     type: string
   DEVICE_PATH:
-    description: 'Specify your Device Path (leave blank to auto-detect from device tree)'
+    description: 'Specify your Device Path (leave blank to auto-detect)'
     default: ''
+    required: false
     type: string
   BUILD_TARGET:
-    description: 'Specify your Build Target'
+    description: 'Specify your Build Target (use "pbrp" for Android 11 or above)'
     default: 'recovery'
+    required: false
     type: choice
     options:
-    - boot
-    - recovery
-    - vendorboot
+      - pbrp
+      - boot
+      - recovery
+      - vendorboot
+  LDCHECK:
+    description: 'Use LDCHECK (true/false)'
+    default: 'false'
+    required: false
+    type: boolean
+  LDCHECKPATH:
+    description: 'Path of blobs to check (for LDCHECK)'
+    default: 'system/bin/qseecomd'
+    required: false
+    type: string
 
 runs:
   using: 'composite'
   steps:
-    - name: Set up environment
+    - name: Set up environment variables
       shell: bash
       run: |
         echo "MANIFEST_BRANCH=${{ inputs.MANIFEST_BRANCH }}" >> $GITHUB_ENV
@@ -47,8 +69,10 @@ runs:
         echo "DEVICE_NAME=${{ inputs.DEVICE_NAME }}" >> $GITHUB_ENV
         echo "DEVICE_PATH=${{ inputs.DEVICE_PATH }}" >> $GITHUB_ENV
         echo "BUILD_TARGET=${{ inputs.BUILD_TARGET }}" >> $GITHUB_ENV
+        echo "LDCHECK=${{ inputs.LDCHECK }}" >> $GITHUB_ENV
+        echo "LDCHECKPATH=${{ inputs.LDCHECKPATH }}" >> $GITHUB_ENV
 
-    - name: 'Build ofox'
+    - name: 'Build PBRP'
       shell: bash
       run: |
         bash $GITHUB_ACTION_PATH/entrypoint.sh
