@@ -22,7 +22,7 @@ jobs:
       with:
         swap-size-gb: 12
 
-    - name: Build OrangeFox Recovery
+    - name: Build PitchBlack Recovery
       uses: mlm-games/pitchblack-pbrp-builder-action@main
       id: build
       with:
