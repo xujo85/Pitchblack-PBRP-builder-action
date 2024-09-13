@@ -103,9 +103,9 @@ echo "Building OrangeFox..."
 cd "$ORANGEFOX_ROOT"
 set +e
 sed -i 's/return sandboxConfig\.working/return false/g' build/soong/ui/build/sandbox_linux.go || true
-set -e
 source build/envsetup.sh
 export ALLOW_MISSING_DEPENDENCIES=true
+set -e
 lunch "twrp_${DEVICE_NAME}-eng"
 make clean
 mka -j$(nproc) adbd "${BUILD_TARGET}image"
