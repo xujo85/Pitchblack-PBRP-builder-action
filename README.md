@@ -94,7 +94,7 @@ jobs:
         swap-size-gb: 16
 
     - name: Build PBRP
-      uses: your-username/pbrp-build-action@main
+      uses: mlm-games/pbrp-build-action@main
       with:
         MANIFEST_BRANCH: 'android-12.1'
         DEVICE_TREE: 'https://github.com/your-username/device_manufacturer_codename'
@@ -133,7 +133,7 @@ jobs:
         swap-size-gb: 16
 
     - name: Build PBRP
-      uses: your-username/pbrp-build-action@main
+      uses: mlm-games/pbrp-build-action@main
       with:
         # MANIFEST_BRANCH is omitted to use the default branch
         DEVICE_TREE: 'https://github.com/your-username/device_manufacturer_codename'
@@ -242,7 +242,7 @@ Make sure to adjust the swap size according to your needs.
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check [issues page](https://github.com/your-username/pbrp-build-action/issues) if you want to contribute.
+Contributions, issues, and feature requests are welcome! Feel free to check [issues page](https://github.com/mlm-games/pbrp-build-action/issues) if you want to contribute.
 
 ---
 
