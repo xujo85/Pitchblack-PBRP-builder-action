@@ -20,13 +20,13 @@ jobs:
     - name: Swap Space   # Easier
       uses: pierotofy/set-swap-space@master
       with:
-        swap-size-gb: 12
+        swap-size-gb: 16
 
     - name: Build PitchBlack Recovery
       uses: mlm-games/pitchblack-pbrp-builder-action@main
       id: build
       with:
-        MANIFEST_BRANCH: '12.1'
+        MANIFEST_BRANCH: 'android-12.1'
         DEVICE_TREE: 'https://github.com/mlm-games/twrp_galaxy_m02s'
         DEVICE_TREE_BRANCH: 'pbrp'
         BUILD_TARGET: 'pbrp'
