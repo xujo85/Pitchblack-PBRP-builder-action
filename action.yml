@@ -1,26 +1,18 @@
-name: "PBRP Build Action"
-author: 'mlm-games'
-description: "A GitHub action to build PitchBlack Recovery Project (PBRP) for a specified device."
+name: "TWRP Build Action"
+author: 'Ragebreaker'
+description: "A GitHub action to build TeamWin Recovery Project (TWRP) for a specified device."
 
 inputs:
   MANIFEST_BRANCH:
-    description: 'PBRP Manifest Branch'
-    default: 'android-12.1'
-    type: choice
-    options:
-      - android-12.1
-      - android-11.0
-      - android-10.0
-      - android-9.0
-      - android-8.1
-      - android-7.1
-      - android-6.0
-  DEVICE_TREE:
-    description: 'Custom Recovery Tree URL (your device tree repository)'
-    default: "https://github.com/${{ github.repository }}"
+    description: 'TWRP Manifest Branch (e.g., twrp-12.1). If not provided, the action will use the default manifest branch.'
+    default: 'twrp-12.1'
     type: string
-   DEVICE_TREE_BRANCH:
-    description: 'Custom Recovery Tree Branch (leave blank to use the default branch of the repository)'
+  DEVICE_TREE:
+    description: 'Device Tree URL (your device tree repository)'
+    default: ''
+    type: string
+  DEVICE_TREE_BRANCH:
+    description: 'Device Tree Branch (leave blank to use the default branch of the repository)'
     default: ''
     type: string
   DEVICE_NAME:
@@ -31,12 +23,15 @@ inputs:
     description: 'Specify your Device Path (leave blank to auto-detect)'
     default: ''
     type: string
+  MAKEFILE_NAME:
+    description: 'Specify your Makefile Name (leave blank to auto-detect)'
+    default: ''
+    type: string
   BUILD_TARGET:
-    description: 'Specify your Build Target (use "pbrp" for Android 11 or above)'
+    description: 'Specify your Build Target'
     default: 'recovery'
     type: choice
     options:
-      - pbrp
       - boot
       - recovery
       - vendorboot
@@ -52,15 +47,14 @@ runs:
         echo "DEVICE_TREE_BRANCH=${{ inputs.DEVICE_TREE_BRANCH }}" >> $GITHUB_ENV
         echo "DEVICE_NAME=${{ inputs.DEVICE_NAME }}" >> $GITHUB_ENV
         echo "DEVICE_PATH=${{ inputs.DEVICE_PATH }}" >> $GITHUB_ENV
+        echo "MAKEFILE_NAME=${{ inputs.MAKEFILE_NAME }}" >> $GITHUB_ENV
         echo "BUILD_TARGET=${{ inputs.BUILD_TARGET }}" >> $GITHUB_ENV
-        echo "LDCHECK=${{ inputs.LDCHECK }}" >> $GITHUB_ENV
-        echo "LDCHECKPATH=${{ inputs.LDCHECKPATH }}" >> $GITHUB_ENV
 
-    - name: 'Build PBRP'
+    - name: 'Build TWRP'
       shell: bash
       run: |
         bash $GITHUB_ACTION_PATH/entrypoint.sh
 
 branding:
   icon: "terminal"
-  color: "black"
+  color: "blue"
