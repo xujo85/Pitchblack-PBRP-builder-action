@@ -1,18 +1,18 @@
-name: "PBRP Build Action"
+name: "TWRP Build Action"
 author: 'Ragebreaker'
-description: "A GitHub action to build PitchBlack Recovery Project (PBRP) for a specified device."
+description: "A GitHub action to build TeamWin Recovery Project (TWRP) for a specified device."
 
 inputs:
   MANIFEST_BRANCH:
-    description: 'PBRP Manifest Branch'
-    default: 'android-12.1'
+    description: 'TWRP Manifest Branch (e.g., twrp-12.1). If not provided, the action will use the default manifest branch.'
+    default: 'twrp-12.1'
     type: string
   DEVICE_TREE:
-    description: 'Custom Recovery Tree URL (your device tree repository)'
+    description: 'Device Tree URL (your device tree repository)'
     default: ''
     type: string
-   DEVICE_TREE_BRANCH:
-    description: 'Custom Recovery Tree Branch (leave blank to use the default branch of the repository)'
+  DEVICE_TREE_BRANCH:
+    description: 'Device Tree Branch (leave blank to use the default branch of the repository)'
     default: ''
     type: string
   DEVICE_NAME:
@@ -28,11 +28,10 @@ inputs:
     default: ''
     type: string
   BUILD_TARGET:
-    description: 'Specify your Build Target (use "pbrp" for Android 11 or above)'
+    description: 'Specify your Build Target'
     default: 'recovery'
     type: choice
     options:
-      - pbrp
       - boot
       - recovery
       - vendorboot
@@ -51,7 +50,7 @@ runs:
         echo "MAKEFILE_NAME=${{ inputs.MAKEFILE_NAME }}" >> $GITHUB_ENV
         echo "BUILD_TARGET=${{ inputs.BUILD_TARGET }}" >> $GITHUB_ENV
 
-    - name: 'Build PBRP'
+    - name: 'Build TWRP'
       shell: bash
       run: |
         bash $GITHUB_ACTION_PATH/entrypoint.sh
