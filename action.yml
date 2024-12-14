@@ -1,11 +1,11 @@
-name: "TWRP Build Action"
+name: "PBRP Build Action"
 author: 'Ragebreaker'
-description: "A GitHub action to build TeamWin Recovery Project (TWRP) for a specified device."
+description: "A GitHub action to build PitchBlack Recovery Project (PBRP) for a specified device."
 
 inputs:
   MANIFEST_BRANCH:
-    description: 'TWRP Manifest Branch (e.g., twrp-12.1). If not provided, the action will use the default manifest branch.'
-    default: 'twrp-12.1'
+    description: 'PBRP Manifest Branch (e.g., twrp-12.1). If not provided, the action will use the default manifest branch.'
+    default: 'android-12.1'
     type: string
   DEVICE_TREE:
     description: 'Device Tree URL (your device tree repository)'
