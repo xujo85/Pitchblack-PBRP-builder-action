@@ -1,5 +1,5 @@
 name: "PBRP Build Action"
-author: 'mlm-games'
+author: 'Ragebreaker'
 description: "A GitHub action to build PitchBlack Recovery Project (PBRP) for a specified device."
 
 inputs:
