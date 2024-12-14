@@ -159,11 +159,11 @@ source build/envsetup.sh
 export ALLOW_MISSING_DEPENDENCIES=true
 set -e
 if [ "$BUILD_TARGET" != "pbrp" ]; then
-    lunch "${DEVICE_MAKEFILE}-eng"
+    lunch "${MAKEFILE_NAME}-eng"
     make clean
     mka -j$(nproc) "${BUILD_TARGET}image"
 else
-    lunch "${DEVICE_MAKEFILE}-eng"
+    lunch "${MAKEFILE_NAME}-eng"
     make clean
     mka -j$(nproc) "$BUILD_TARGET"
 fi
