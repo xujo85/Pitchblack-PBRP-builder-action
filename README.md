@@ -43,7 +43,7 @@ This action accepts the following inputs:
 | Input                | Description                                                                                                                                   | Required | Default               |
 |----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|----------|-----------------------|
 | `MANIFEST_BRANCH`    | PBRP Manifest Branch (e.g., 'android-12.1'). If not provided, the default manifest branch will be used.                                       | No       | `''` (empty string)   |
-| `DEVICE_TREE`        | Custom Recovery Tree URL (your device tree repository).                                                                                       | No       | `"https://github.com/${{ github.repository }}"` |
+| `DEVICE_TREE`        | Custom Recovery Tree URL (your device tree repository).                                                                                       | No       | `''` (empty string)   |
 | `DEVICE_TREE_BRANCH` | Custom Recovery Tree Branch. If not provided, the default branch of the repository will be used.                                              | No       | `''` (empty string)   |
 | `DEVICE_NAME`        | Device Codename (leave blank to auto-detect from the device tree).                                                                            | No       | `''` (empty string)   |
 | `DEVICE_PATH`        | Device Path (leave blank to auto-detect; e.g., 'device/manufacturer/codename').                                                               | No       | `''` (empty string)   |
