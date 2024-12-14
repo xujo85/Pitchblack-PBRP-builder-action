@@ -29,7 +29,7 @@ inputs:
     type: string
   BUILD_TARGET:
     description: 'Specify your Build Target'
-    default: 'recovery'
+    default: 'pbrp'
     type: choice
     options:
       - pbrp
