@@ -57,7 +57,7 @@ echo "MANIFEST_URL=${MANIFEST_URL}" >> $GITHUB_ENV
 echo "Initializing PBRP repo..."
 if [ -n "$MANIFEST_BRANCH" ]; then
     echo "Initializing repo with branch: $MANIFEST_BRANCH"
-    repo init  --depth=1 -u "$MANIFEST_URL" -b "$MANIFEST_BRANCH"
+    repo init --depth=1 -u "$MANIFEST_URL" -b "$MANIFEST_BRANCH"
 else
     echo "Initializing repo without specifying a branch (default branch will be used)"
     repo init --depth=1 -u "$MANIFEST_URL"
@@ -65,7 +65,7 @@ fi
 
 # Sync the repo
 echo "Syncing PBRP repo..."
-repo sync -j12 --force-sync --jobs-network=7 --jobs-checkout=9 --interleaved --auto-gc -v -s
+repo sync -j12 --force-sync --jobs-network=7 --jobs-checkout=9 --interleaved --auto-gc -v
 
 
 # Save the temp tree in the manifest dir.
