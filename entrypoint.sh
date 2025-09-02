@@ -1,5 +1,7 @@
 #!/bin/bash
 set -e
+export GIT_CURL_VERBOSE=1
+export GIT_TRACE=1
 
 # Function to set output variables
 set_output() {
@@ -57,10 +59,10 @@ echo "MANIFEST_URL=${MANIFEST_URL}" >> $GITHUB_ENV
 echo "Initializing PBRP repo..."
 if [ -n "$MANIFEST_BRANCH" ]; then
     echo "Initializing repo with branch: $MANIFEST_BRANCH"
-    repo init --depth=1 -u "$MANIFEST_URL" -b "$MANIFEST_BRANCH"
+    repo init --depth=1 -u "$MANIFEST_URL" -b "$MANIFEST_BRANCH" --verbose
 else
     echo "Initializing repo without specifying a branch (default branch will be used)"
-    repo init --depth=1 -u "$MANIFEST_URL"
+    repo init --depth=1 -u "$MANIFEST_URL" --verbose
 fi
 
 # Sync the repo
@@ -71,7 +73,6 @@ repo sync -j12 --force-sync --jobs-network=7 --jobs-checkout=9 --interleaved --a
 # Save the temp tree in the manifest dir.
 pushd "$MANIFEST_DIR"
 
-
 # If DEVICE_TREE is not provided, default to the current repository
 if [ -z "$DEVICE_TREE" ]; then
     DEVICE_TREE="https://github.com/${GITHUB_REPOSITORY}"
@@ -81,7 +82,6 @@ fi
 
 
 # Clone device tree into a temporary directory
-export GIT_CURL_VERBOSE=1
 echo "Cloning device tree..."
 if [ -n "$DEVICE_TREE_BRANCH" ]; then
     echo "Cloning device tree with branch: $DEVICE_TREE_BRANCH"
@@ -97,8 +97,8 @@ if [ -z "$DEVICE_NAME" ] || [ -z "$DEVICE_PATH" ] || [ -z "$MAKEFILE_NAME" ]; th
     cd tmp_device_tree
 
     # Initialize variables
-    DEVICE_NAME=""
-    BRAND=""
+    DEVICE_NAME="water"
+    BRAND="xiaomi"
     DEVICE_PATH=""
     MAKEFILE_NAME=""
 
