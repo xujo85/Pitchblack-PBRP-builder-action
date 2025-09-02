@@ -13,7 +13,7 @@ sudo apt-get -y upgrade
 sudo apt-get install -y bc bison build-essential curl flex g++-multilib gcc-multilib git gnupg gperf imagemagick \
     lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev \
     libssl-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev \
-    python3 python2 bash tmux ccache curl unzip
+    python3 bash tmux ccache curl unzip
 
 # Install OpenJDK 8
 echo "Installing OpenJDK 8..."
@@ -60,7 +60,7 @@ echo "MANIFEST_URL=${MANIFEST_URL}" >> $GITHUB_ENV
 echo "Initializing PBRP repo..."
 if [ -n "$MANIFEST_BRANCH" ]; then
     echo "Initializing repo with branch: $MANIFEST_BRANCH"
-    repo init --depth=1 -u "$MANIFEST_URL" -b "$MANIFEST_BRANCH"
+    repo init  --depth=1 -u "$MANIFEST_URL" -b "$MANIFEST_BRANCH"
 else
     echo "Initializing repo without specifying a branch (default branch will be used)"
     repo init --depth=1 -u "$MANIFEST_URL"
@@ -68,7 +68,7 @@ fi
 
 # Sync the repo
 echo "Syncing PBRP repo..."
-repo sync -j$(nproc --all) --force-sync
+repo sync -j12 --force-sync --jobs-network=7 --jobs-checkout=9 --interleaved --auto-gc -v -s
 
 
 # Save the temp tree in the manifest dir.
@@ -82,7 +82,9 @@ if [ -z "$DEVICE_TREE" ]; then
     echo "DEVICE_TREE=${DEVICE_TREE}" >> $GITHUB_ENV
 fi
 
+
 # Clone device tree into a temporary directory
+export GIT_CURL_VERBOSE=1
 echo "Cloning device tree..."
 if [ -n "$DEVICE_TREE_BRANCH" ]; then
     echo "Cloning device tree with branch: $DEVICE_TREE_BRANCH"
