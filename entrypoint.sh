@@ -98,7 +98,7 @@ if [ -z "$DEVICE_NAME" ] || [ -z "$DEVICE_PATH" ] || [ -z "$MAKEFILE_NAME" ]; th
 
     # Initialize variables
     DEVICE_NAME="water"
-    BRAND="xiaomi"
+    BRAND="Xiaomi"
     DEVICE_PATH=""
     MAKEFILE_NAME=""
 
